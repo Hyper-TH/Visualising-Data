@@ -91,6 +91,13 @@ mtcars$cyl <- as.factor(mtcars$cyl)
 
 # GGPLOT2
 
+# ggplot sets out the area of the graph
+# First term defines what data is being used 
+# and the aesthetics (aes()) of the graph
+# Followed by + to add a new term, cannot be at the start of line
+# Can save graph equation as building it and reuse parts of it
+# MORE ON GGPLOT.R
+
 # Create bar plot with "cyl" column as the x-axis variable
 ggplot(mtcars, aes(cyl)) + geom_bar()
 
