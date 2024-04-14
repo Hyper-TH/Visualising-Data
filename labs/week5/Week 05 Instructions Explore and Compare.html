@@ -1,0 +1,246 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html><head><link rel="stylesheet" href="/uBucrdvgpGIKAAqy"/></head><body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+    
+    
+    
+    
+
+
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput">
+<h1>5.  Explore and Compare<a rel="noopener" class="anchor-link" href="#5.--Explore-and-Compare">&#182;</a></h1>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput">
+<h2>Steps:<a rel="noopener" class="anchor-link" href="#Steps:">&#182;</a></h2><ul>
+<li>Pick a dataset</li>
+<li>Generate single variable histogram and box plot (or violin plot, if you&#39;d prefer)</li>
+<li>Check it for skewedness / requirement to subset.</li>
+<li>Prepare the data (pivot, subset, summarize, create log column as required)</li>
+<li>Regenerate the charts at 2 with the amended dataset.</li>
+<li>Introduce a further categorical variable and generate a comparison bar chart.</li>
+<li>Using Cowplot, generate a set of charts with a multiple density chart, multiple box plot and multiple bar chart.</li>
+<li>Evaluate your charts using Gestalt and Accent.</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput">
+<h2>Part 1. Pick a dataset<a rel="noopener" class="anchor-link" href="#Part-1.-Pick-a-dataset">&#182;</a></h2><ul>
+<li>Find a dataset with categorical and numeric data - e.g.:<ul>
+<li>olympics.csv (note: you may need to subset on the countries (denoted as NOC) who won medals)<ul>
+<li>df %&gt;%  group_by(var1) %&gt;%  mutate(var1_count = n())</li>
+</ul>
+</li>
+<li>vgsales.csv (note: if the data is too skewed, use the log of the data<ul>
+<li>log(df$column))</li>
+</ul>
+</li>
+<li>SCGOP2016.csv. This is a dataset showing the number of votes cast for each candidate per county in the 2016 Republican (GOP) primaries in 2016. Hint: limit the number of candidates to the three who got the most votes.</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&#160;[&#160;]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor">
+     <div class="CodeMirror cm-s-jupyter">
+<div class="highlight hl-r"><pre><span></span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput">
+<h2>Part 2. Check and generate<a rel="noopener" class="anchor-link" href="#Part-2.-Check-and-generate">&#182;</a></h2><ul>
+<li>Generate single variable histogram and box plot (or violin plot, if you&#39;d prefer)</li>
+<li>Check it for skewedness / requirement to subset.</li>
+<li>Prepare the data (pivot, subset, summarize, create log column as required)</li>
+<li>Regenerate the charts at 2 with the amended dataset.</li>
+<li>Introduce a further categorical variable and generate a comparison bar chart.</li>
+<li>Using Cowplot, generate a set of charts with a multiple density chart, multiple box plot and multiple bar chart.</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&#160;[&#160;]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor">
+     <div class="CodeMirror cm-s-jupyter">
+<div class="highlight hl-r"><pre><span></span><span class="n">lst</span> <span class="o">&lt;-</span> <span class="nf">sort</span><span class="p">(</span><span class="n">df</span><span class="o">$</span><span class="n">column</span><span class="p">)</span>  <span class="c1">#  Replace df$column with your own column</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&#160;[&#160;]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor">
+     <div class="CodeMirror cm-s-jupyter">
+<div class="highlight hl-r"><pre><span></span><span class="c1"># Calculate median, quantile list and inter-quantile range</span>
+<span class="n">median</span> <span class="o">&lt;-</span> <span class="nf">median</span><span class="p">(</span><span class="n">lst</span><span class="p">)</span>
+<span class="n">qs</span> <span class="o">&lt;-</span><span class="nf">quantile </span><span class="p">(</span><span class="n">lst</span><span class="p">)</span>
+<span class="n">IQR</span> <span class="o">&lt;-</span> <span class="nf">IQR</span><span class="p">(</span><span class="n">lst</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="nf">paste0</span><span class="p">(</span><span class="s">&quot;Inter Quartile Range Global Sales &quot;</span><span class="p">,</span> <span class="n">IQR</span><span class="p">,</span> <span class="s">&quot; million units&quot;</span><span class="p">))</span>
+<span class="nf">print</span><span class="p">(</span><span class="s">&quot;Quantile Global Sales &quot;</span><span class="p">)</span>
+<span class="n">qs</span>
+<span class="c1"># To get min and max, calculate 1.5 x IQR.  </span>
+
+<span class="n">calc</span> <span class="o">&lt;-</span> <span class="n">IQR</span> <span class="o">*</span> <span class="m">1.5</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="nf">paste0</span><span class="p">(</span><span class="s">&quot;IQR*1.5 = &quot;</span><span class="p">,</span><span class="n">calc</span><span class="p">))</span>
+<span class="c1"># The max value is the highest value inside the 3rd quartile, plus 1.5 x IQR.  </span>
+
+<span class="n">maxinq2</span> <span class="o">&lt;-</span> <span class="nf">max</span><span class="p">(</span><span class="n">lst</span><span class="p">[</span><span class="n">lst</span><span class="o">&lt;</span><span class="n">qs</span><span class="p">[</span><span class="m">4</span><span class="p">]])</span>
+<span class="n">max</span> <span class="o">&lt;-</span> <span class="n">maxinq2</span><span class="o">+</span><span class="n">calc</span>
+<span class="nf">print</span><span class="p">(</span><span class="nf">paste0</span><span class="p">(</span><span class="s">&quot;max = &quot;</span><span class="p">,</span> <span class="n">max</span><span class="p">))</span>
+
+<span class="c1"># The min value is the highest value inside the 1st quartile, minus 1.5 x IQR.  </span>
+<span class="n">maxinq1</span> <span class="o">&lt;-</span> <span class="nf">max</span><span class="p">(</span><span class="n">lst</span><span class="p">[</span><span class="n">lst</span><span class="o">&lt;</span><span class="n">qs</span><span class="p">[</span><span class="m">2</span><span class="p">]])</span>
+<span class="n">min</span> <span class="o">&lt;-</span> <span class="n">maxinq1</span> <span class="o">-</span> <span class="n">calc</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="nf">paste0</span><span class="p">(</span><span class="s">&quot;min = &quot;</span><span class="p">,</span> <span class="n">min</span><span class="p">))</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput">
+<h2>PART THREE<a rel="noopener" class="anchor-link" href="#PART-THREE">&#182;</a></h2><ul>
+<li>Evaluate your charts using Gestalt and Accent.</li>
+</ul>
+<h2>Gestalt:<a rel="noopener" class="anchor-link" href="#Gestalt:">&#182;</a></h2><ul>
+<li>Proximity</li>
+<li>Similarity</li>
+<li>Enclosure</li>
+<li>Figure Ground</li>
+<li>Closure</li>
+<li>Continuity</li>
+<li>Connection</li>
+<li>Focal point</li>
+</ul>
+<h2>ACCENT<a rel="noopener" class="anchor-link" href="#ACCENT">&#182;</a></h2><ul>
+<li>Apprehension</li>
+<li>Clarity</li>
+<li>Consistency</li>
+<li>Efficiency</li>
+<li>Necessity</li>
+<li>Truthfulness</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&#160;[&#160;]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor">
+     <div class="CodeMirror cm-s-jupyter">
+<div class="highlight hl-r"><pre><span></span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div>
+
+
+
+
+
+
+
+
+
+<script type="module" src="https://s.brightspace.com/lib/bsi/20.24.2-169/unbundled/mathjax.js"></script><script type="text/javascript">document.addEventListener('DOMContentLoaded', function() {
+					if (document.querySelector('math') || /\$\$|\\\(|\\\[|\\begin{|\\ref{|\\eqref{/.test(document.body.innerHTML)) {
+						document.querySelectorAll('mspace[linebreak="newline"]').forEach(elm => {
+							elm.setAttribute('style', 'display: block; height: 0.5rem;');
+						});
+
+						window.D2L.MathJax.loadMathJax({
+							'outputScale': 1.5,
+							'renderLatex': true
+						});
+					}
+				});</script><script type="module" src="https://s.brightspace.com/lib/bsi/20.24.2-169/unbundled/prism.js"></script><script type="text/javascript">document.addEventListener('DOMContentLoaded', function() {
+					document.querySelectorAll('.d2l-code').forEach(code => {
+						window.D2L.Prism.formatCodeElement(code);
+					});
+				});</script></body></html>
