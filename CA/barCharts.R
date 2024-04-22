@@ -1,0 +1,2 @@
+rm(male_data)
+
