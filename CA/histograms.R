@@ -1,3 +1,5 @@
+## TODO: Change source dataset
+
 df_2020_developed <- merged_df %>%
   filter(World_Status == "Developed", Year == 2020) %>%
   # Sum up the Tertiary_Education_Female and Tertiary_Education_Male values for the visualization

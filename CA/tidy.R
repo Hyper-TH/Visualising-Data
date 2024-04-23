@@ -109,3 +109,14 @@ w_out_of_school <- out_of_school[out_of_school$Entity == "World", ]
 # We need the age group Population, sum of (5-9, 10-14, 15-19)
 nrow(population)
 sum(is.na(population))
+
+population <- population %>%
+  mutate(Children_Population = Population.aged.5.to.9.years + 
+           Population.aged.10.to.14.years + 
+           Population.aged.15.to.19.years)
+
+population <- population %>%
+  rename(
+    Country = Country.name
+  )
+

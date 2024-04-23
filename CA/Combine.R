@@ -5,11 +5,6 @@ merged_df <- merge(merged_df, gender_gap_education, by = c("Entity", "Year"), al
 
 merged_df <- merged_df[ , !names(merged_df) %in% c('Secondary_Education_Male', 'Secondary_Education_Female', 'Primary_Education_Male', 'Primary_Education_Female')]
 
-# Combine for world data
-world_df <- merge(w_education, w_out_of_school, by = c("Entity", "Year"), all.x = TRUE)
-world_df <- merge(world_df, w_gender_gap, by = c("Entity", "Year"), all.x = TRUE)
-
-world_df <- world_df[ , !names(world_df) %in% c('Entity')]
 
 # For column Developing/Developed
 merged_df <- merged_df %>%
@@ -49,4 +44,101 @@ merged_df <- merged_df %>%
     TRUE ~ "Developed"
   ))
 
-## TODO: Combine out_of_school and gender_gap_filtered and education_ratio
+# Add population
+# Select only the key columns and the Children_Population column
+population_relevant <- population[, c("Country", "Year", "Children_Population")]
+merged_df <- merge(merged_df, population_relevant, by = c("Country", "Year"), all.x = TRUE)
+
+merged_2015 <- merged_df[merged_df$Year == 2015, ]
+merged_2020 <- merged_df[merged_df$Year == 2020, ]
+
+# Drop N/A columns
+merged_2015 <- merged_2015[ , !names(merged_2015) %in% c('Learning_Years')]
+merged_2020 <- merged_2020[ , !names(merged_2020) %in% c('Dropped_Out_Male')]
+merged_2020 <- merged_2020[ , !names(merged_2020) %in% c('Dropped_Out_Female')]
+
+print(population)
+
+## Combine out_of_school and gender_gap_filtered and education_ratio
+merged_df_2 <- merge(out_of_school, gender_gap, by = c("Entity", "Year"), all.x = TRUE)
+merged_df_2 <- merge(merged_df_2, education_ratio, by = c("Entity", "Year"), all.x = TRUE)
+
+
+# Count year instances for each entity
+entity_counts <- merged_df_2 %>%
+  group_by(Entity) %>%
+  summarise(Year_Count = n()) %>%
+  ungroup() %>%
+  arrange(desc(Year_Count))
+
+# View the results
+print(entity_counts)
+
+selected_entities <- c(
+  "Arab World (WB)", 
+  "Central Europe and the Baltics (WB)", 
+  "EU (27)", 
+  "East Asia and the Pacific (WB)", 
+  "Europe and Central Asia (WB)", 
+  "Latin America and Caribbean (WB)", 
+  "Middle East and North Africa (WB)", 
+  "North America (WB)", 
+  "South Asia (WB)", 
+  "Sub-Saharan Africa (WB)"
+)
+
+merged_df_2 <- merged_df_2 %>%
+  filter(!(Entity %in% selected_entities))
+
+# Merge population
+merged_df_2 <- merged_df_2 %>%
+  rename(
+    Country = Entity
+  )
+
+merged_df_2 <- merge(merged_df_2, population_relevant, by = c("Country", "Year"), all.x = TRUE)
+
+merged_df_2 <- merged_df_2[ , !names(merged_df_2) %in% c('With_Education_Share')]
+merged_df_2 <- merged_df_2[ , !names(merged_df_2) %in% c('With_No_Education_Share')]
+
+# Continents
+merged_continents <- merged_df_2 %>%
+  filter(Entity %in% selected_entities)
+
+colnames(merged_continents)
+
+merged_continents <- merged_continents %>%
+  select(Entity, Year, Dropped_Out_Male, Dropped_Out_Female)
+
+unique(merged_continents$Entity)
+
+
+# Combine for world data
+world_df <- merge(w_education, w_out_of_school, by = c("Entity", "Year"), all.x = TRUE)
+world_df <- merge(world_df, w_gender_gap, by = c("Entity", "Year"), all.x = TRUE)
+
+world_df <- world_df %>%
+  rename(
+    Country = Entity
+  )
+
+# Merge population 
+world_df <- merge(world_df, population_relevant, by = c("Country", "Year"), all.x = TRUE)
+
+world_df <- world_df %>%
+  rename(
+    Children_Population_5_to_19   = Children_Population
+  )
+
+# Remove rows where population is N/A
+world_df <- world_df %>%
+  filter(!is.na(Children_Population_5_to_19))
+
+world_df <- world_df %>%
+  mutate(Unenrolled_Secondary_Children = 200 - ((100 - Secondary_Education_Male) + (100 - Secondary_Education_Female)))
+
+world_df <- world_df %>%
+  mutate(Unenrolled_Primary_Children = 200 - ((100 - Primary_Education_Male) + (100 - Primary_Education_Female)))
+
+world_df <- world_df[ , !names(world_df) %in% c('Country')]
+

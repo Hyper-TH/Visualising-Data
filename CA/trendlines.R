@@ -23,6 +23,8 @@ ggplot(world_df, aes(x = Year, y = With_Education_Share)) +
     )  
 
 
+# Geom_line for 
+
 # Trendline for access to education (OECD countries)
 education_ratio$Year <- as.numeric(as.character(education_ratio$Year))
 education_ratio$With_Education_Share <- as.numeric(education_ratio$With_Education_Share)
