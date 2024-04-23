@@ -1,16 +1,16 @@
-# Left join to include all rows from df1 and so on...
-merged_df <- merge(education, learning, by = c("Entity", "Year"), all.x = TRUE)
-merged_df <- merge(merged_temp, out_of_school, by = c("Entity", "Year"), all.x = TRUE)
-merged_df <- merge(merged_df, gender_gap_education, by = c("Entity", "Year"), all.x = TRUE)
+rm(merged_df)
+rm(merged_df_2)
+rm(world_df)
 
+# Left join to include all rows from df1 and so on...
+merged_df <- merge(education, learning, by = c("Country", "Year"), all.x = TRUE)
+merged_df <- merge(merged_df, out_school, by = c("Country", "Year"), all.x = TRUE)
+merged_df <- merge(merged_df, gender_gap, by = c("Country", "Year"), all.x = TRUE)
+
+# Merged df is only for 2020 / 2015 and they have no data for these columns
 merged_df <- merged_df[ , !names(merged_df) %in% c('Secondary_Education_Male', 'Secondary_Education_Female', 'Primary_Education_Male', 'Primary_Education_Female')]
 
 
-# For column Developing/Developed
-merged_df <- merged_df %>%
-  rename(
-    Country = Entity
-  )
 
 # List of developing countries
 developing_countries <- c(
@@ -44,9 +44,10 @@ merged_df <- merged_df %>%
     TRUE ~ "Developed"
   ))
 
+
 # Add population
 # Select only the key columns and the Children_Population column
-population_relevant <- population[, c("Country", "Year", "Children_Population")]
+population_relevant <- population[, c("Country", "Year", "Children_Population_5_to_19")]
 merged_df <- merge(merged_df, population_relevant, by = c("Country", "Year"), all.x = TRUE)
 
 merged_2015 <- merged_df[merged_df$Year == 2015, ]
@@ -57,24 +58,17 @@ merged_2015 <- merged_2015[ , !names(merged_2015) %in% c('Learning_Years')]
 merged_2020 <- merged_2020[ , !names(merged_2020) %in% c('Dropped_Out_Male')]
 merged_2020 <- merged_2020[ , !names(merged_2020) %in% c('Dropped_Out_Female')]
 
-print(population)
 
 ## Combine out_of_school and gender_gap_filtered and education_ratio
-merged_df_2 <- merge(out_of_school, gender_gap, by = c("Entity", "Year"), all.x = TRUE)
-merged_df_2 <- merge(merged_df_2, education_ratio, by = c("Entity", "Year"), all.x = TRUE)
+education_ratio$Code <- NULL
+out_of_school$Code <- NULL
 
+merged_df_2 <- merge(out_of_school, gender_gap, by = c("Country", "Year"), all.x = TRUE)
+merged_df_2 <- merge(merged_df_2, education_ratio, by = c("Country", "Year"), all.x = TRUE)
 
-# Count year instances for each entity
-entity_counts <- merged_df_2 %>%
-  group_by(Entity) %>%
-  summarise(Year_Count = n()) %>%
-  ungroup() %>%
-  arrange(desc(Year_Count))
-
-# View the results
-print(entity_counts)
-
-selected_entities <- c(
+# Remove non-country values
+selected_continents <- c(
+  "World",
   "Arab World (WB)", 
   "Central Europe and the Baltics (WB)", 
   "EU (27)", 
@@ -88,29 +82,27 @@ selected_entities <- c(
 )
 
 merged_df_2 <- merged_df_2 %>%
-  filter(!(Entity %in% selected_entities))
+  filter(!(Country %in% selected_continents))
+
 
 # Merge population
-merged_df_2 <- merged_df_2 %>%
-  rename(
-    Country = Entity
-  )
-
 merged_df_2 <- merge(merged_df_2, population_relevant, by = c("Country", "Year"), all.x = TRUE)
 
 merged_df_2 <- merged_df_2[ , !names(merged_df_2) %in% c('With_Education_Share')]
 merged_df_2 <- merged_df_2[ , !names(merged_df_2) %in% c('With_No_Education_Share')]
 
-# Continents
-merged_continents <- merged_df_2 %>%
-  filter(Entity %in% selected_entities)
+# Rename columns for clarity
+merged_df_2 <- merged_df_2 %>%
+  rename(
+    Dropped_Out_HS_Female = Dropped_Out_Female,
+    Dropped_Out_HS_Male = Dropped_Out_Male,
+  )
 
-colnames(merged_continents)
-
-merged_continents <- merged_continents %>%
-  select(Entity, Year, Dropped_Out_Male, Dropped_Out_Female)
-
-unique(merged_continents$Entity)
+merged_2015 <- merged_2015 %>%
+  rename(
+    Dropped_Out_HS_Female = Dropped_Out_Female,
+    Dropped_Out_HS_Male = Dropped_Out_Male,
+  )
 
 
 # Combine for world data
@@ -122,13 +114,9 @@ world_df <- world_df %>%
     Country = Entity
   )
 
+
 # Merge population 
 world_df <- merge(world_df, population_relevant, by = c("Country", "Year"), all.x = TRUE)
-
-world_df <- world_df %>%
-  rename(
-    Children_Population_5_to_19   = Children_Population
-  )
 
 # Remove rows where population is N/A
 world_df <- world_df %>%

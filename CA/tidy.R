@@ -75,24 +75,50 @@ gender_gap_education <- gender_gap_education %>%
 
 # Prepare for merging
 
-# Remove all non-countries
-education_ratio <- education_ratio[ , !names(education_ratio) %in% c('Code')]
-learning_years <- learning_years[ , !names(learning_years) %in% c('Code')]
-out_of_school <- out_of_school[ , !names(out_of_school) %in% c('Code')]
-gender_gap_education <- gender_gap_education[ , !names(gender_gap_education) %in% c('Code')]
+# Remove Code
+education <- education_ratio[ , !names(education_ratio) %in% c('Code')]
+learning <- learning_years[ , !names(learning_years) %in% c('Code')]
+out_school <- out_of_school[ , !names(out_of_school) %in% c('Code')]
+gender_gap <- gender_gap_education[ , !names(gender_gap_education) %in% c('Code')]
 
+education$Code <- NULL
+learning$Code <- NULL
+out_school$Code <- NULL
+gender_gap$Code <- NULL
 
-# Find common codes between the first two datasets
+# Find common entities (country) between the first two datasets
 common_entities_temp <- intersect(education_ratio$Entity, learning_years$Entity)
 
-# Find common codes across all three datasets
+# Find common entities across all three datasets
 common_entities <- intersect(common_entities_temp, out_of_school$Entity)
 
+# Get all data for common entities and put it there
+education <- education[education_ratio$Entity %in% common_entities, ]
+learning <- learning[learning_years$Entity %in% common_entities, ]
+out_school <- out_school[out_of_school$Entity %in% common_entities, ]
+gender_gap <- gender_gap[gender_gap_education$Entity %in% common_entities, ]
 
-education <- education_ratio[education_ratio$Entity %in% common_entities, ]
-learning <- learning_years[learning_years$Entity %in% common_entities, ]
-out_school <- out_of_school[out_of_school$Entity %in% common_entities, ]
-gender_gap <- gender_gap_education[gender_gap_education$Entity %in% common_entities, ]
+# Rename columns
+education <- education %>%
+  rename(
+    Country = Entity
+  )
+
+learning <- learning %>%
+  rename(
+    Country = Entity
+  )
+
+
+out_school <- out_school %>%
+  rename(
+    Country = Entity
+  )
+
+gender_gap <- gender_gap %>%
+  rename(
+    Country = Entity
+  )
 
 
 # FOR WORLD DATA
@@ -102,6 +128,10 @@ w_education <- education_ratio[education_ratio$Entity == "World", ]
 w_gender_gap <- gender_gap_education[gender_gap_education$Entity == "World", ]
 w_out_of_school <- out_of_school[out_of_school$Entity == "World", ]
 
+# Drop Code columns
+w_education$Code <- NULL
+w_out_of_school$Code <- NULL
+w_gender_gap$Code <- NULL
 
 
 ### POPULATION ###
@@ -111,7 +141,7 @@ nrow(population)
 sum(is.na(population))
 
 population <- population %>%
-  mutate(Children_Population = Population.aged.5.to.9.years + 
+  mutate(Children_Population_5_to_19 = Population.aged.5.to.9.years + 
            Population.aged.10.to.14.years + 
            Population.aged.15.to.19.years)
 
@@ -119,4 +149,3 @@ population <- population %>%
   rename(
     Country = Country.name
   )
-

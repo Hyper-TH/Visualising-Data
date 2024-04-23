@@ -1,5 +1,3 @@
-
-
 # Check the complete rows
 complete_rows_df_2 <- merged_df_2[complete.cases(merged_df_2), ]
 complete_rows_df_2
