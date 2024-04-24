@@ -1,20 +1,19 @@
-# Use this if needed
-# df_filtered <- df %>%
-#  filter(!is.na(x) & !is.na(y))  # Remove rows where x or y is NA
-
 # Line chart of global access to education
 # Base plot
 world_df <- world_df %>%
-  mutate(Children_Not_Educated = Children_Population_5_to_19 * With_No_Education_Share / 100)
+  mutate(Children_Not_Educated = Children_Population_5_to_19 * With_Education / 100)
 
 world_df <- world_df %>%
-  mutate(Children_Educated = Children_Population_5_to_19 * With_Education_Share / 100)
+  mutate(Children_Educated = Children_Population_5_to_19 * Without_Education / 100)
 
 # Create the base plot
 global_access_education <- ggplot(world_df, aes(x = Year)) +
   geom_line(aes(y = Children_Not_Educated, group = 1, colour = "Children Not Getting Education")) +
   labs(y = "Population (Millions)", colour = "Indicator") +
-  scale_y_continuous(name = "Population") + 
+  scale_y_continuous(
+    name = "Population",
+    label = label_number()
+  ) +
   scale_x_continuous(breaks = seq(min(world_df$Year, na.rm = TRUE), max(world_df$Year, na.rm = TRUE), by = 10)) 
 
 # Add the educated children
@@ -31,15 +30,33 @@ global_access_education <- global_access_education + theme_minimal() +
 global_access_education
 
 
+# Correlation between Access to education and learning years
+ggplot(merged_2020, aes(x = Learning_Years, y = With_Education, color = World_Status)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE, aes(group = World_Status)) +
+  labs(x = "Learning Years", y = "Educated (%)", title = "Correlation between Learning Years and Education Access by World Status") +
+  theme_minimal() +
+  scale_color_manual(values = c("Developing" = "blue", "Developed" = "red"))
+
+ggplot(merged_2020, aes(x = Learning_Years, y = Without_Education, color = World_Status)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE, aes(group = World_Status)) +
+  labs(x = "Learning Years", y = "No Education Access (%)", title = "Correlation between Learning Years and No Education Access by World Status") +
+  theme_minimal() +
+  scale_color_manual(values = c("Developing" = "blue", "Developed" = "red"))
+
+
+## EXTRA CHARTS ##
+
 # Line chart for access to education (by OECD countries)
 education_ratio$Year <- as.numeric(as.character(education_ratio$Year))
 education_ratio$With_Education_Share <- as.numeric(education_ratio$With_Education_Share)
 
 # Filter for rows where the Entity is 'OECD'
-df_OECD <- education_ratio[grepl("OECD", education_ratio$Country), ]
+df_OECD <- education_ratio[grepl("OECD", education_ratio$Entity), ]
 
 # Create the line plot
-ggplot(df_OECD, aes(x = Year, y = With_Education_Share, group = Country, color = Country)) +
+ggplot(df_OECD, aes(x = Year, y = With_Education_Share, group = Entity, color = Entity)) +
   geom_line() +
   geom_point() +
   scale_color_manual(values = c("red", "blue", "green", "orange", "brown", "magenta", "cyan", "yellow")) +

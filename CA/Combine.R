@@ -13,35 +13,20 @@ merged_df <- merged_df[ , !names(merged_df) %in% c('Secondary_Education_Male', '
 
 
 # List of developing countries
-developing_countries <- c(
-  "Albania", "Armenia", "Azerbaijan", "Belarus", "Bosnia & Herzegovina", "Georgia", 
-  "Hungary", "Kosovo", "Macedonia (Former Yugoslav Republic)", "Moldova", "Montenegro", 
-  "Poland", "Romania", "Slovakia", "Serbia", "Turkey", "Ukraine", "Algeria", "Egypt", 
-  "Libya", "Morocco", "Tunisia", "Angola", "Benin", "Botswana", "Burkina Faso", "Burundi", 
-  "Cameroon", "Cabo Verde", "Central African Republic", "Chad", "Comoros", "Congo", 
-  "Congo (Democratic Republic of the)", "Cote d'Ivoire", "Djibouti", "Equatorial Guinea", 
-  "Eritrea", "Eswatini", "Ethiopia", "Gabon", "Gambia", "Ghana", "Guinea", "Guinea-Bissau", 
-  "Kenya", "Lesotho", "Liberia", "Madagascar", "Malawi", "Mali", "Mauritania", "Mauritius", 
-  "Mozambique", "Namibia", "Niger", "Nigeria", "Rwanda", "St. Helena", "Sao Tome & Principe", 
-  "Senegal", "Sierra Leone", "Somalia", "South Africa", "South Sudan", "Sudan", "Tanzania", 
-  "Togo", "Uganda", "Zambia", "Zimbabwe", "Belize", "Costa Rica", "Cuba", "Dominica", 
-  "Dominican Republic", "El Salvador", "Grenada", "Guatemala", "Haiti", "Honduras", 
-  "Jamaica", "Mexico", "Montserrat", "Nicaragua", "Panama", "St. Lucia", "St. Vincent and the Grenadines", 
-  "Argentina", "Bolivia", "Brazil", "Colombia", "Ecuador", "Guyana", "Paraguay", "Peru", 
-  "Suriname", "Venezuela", "Afghanistan", "Bangladesh", "Bhutan", "Cambodia", "China", 
-  "India", "Indonesia", "Kazakhstan", "Korea (Democratic People’s Republic of)", "Kyrgyzstan", 
-  "Lao People’s Democratic Republic", "Malaysia", "Maldives", "Mongolia", "Myanmar", 
-  "Nepal", "Pakistan", "Philippines", "Sri Lanka", "Tajikistan", "Thailand", "Timor Leste", 
-  "Turkmenistan", "Uzbekistan", "Vietnam", "Iran", "Iraq", "Jordan", "Lebanon", 
-  "Syrian Arab Republic", "West Bank and Gaza Strip", "Yemen", "Cook Islands", "Fiji", 
-  "Kiribati", "Marshall Islands", "Micronesia", "Nauru", "Niue", "Palau", "Papua New Guinea", 
-  "Samoa", "Solomon Islands", "Tokelau", "Tonga", "Tuvalu", "Vanuatu", "Wallis & Futuna"
+developed_countries <- c(
+  "Andorra", "Australia", "Austria", "Belgium", "Canada", "Croatia", "Cyprus",
+  "Czechia", "Denmark", "Estonia", "Finland", "France", "Germany",
+  "Greece", "Hong Kong", "Iceland", "Ireland", "Israel", "Italy", "Japan",
+  "Korea", "Latvia", "Lithuania", "Luxembourg", "Macao", "Malta", "Netherlands",
+  "New Zealand", "Norway", "Portugal", "Puerto Rico", "San Marino", "Singapore",
+  "Slovakia", "Slovenia", "Spain", "Sweden", "Switzerland", "Taiwan Province of China",
+  "United Kingdom", "United States"
 )
 
 merged_df <- merged_df %>%
   mutate(World_Status = case_when(
-    Country %in% developing_countries ~ "Developing",
-    TRUE ~ "Developed"
+    Country %in% developed_countries ~ "Developed",
+    TRUE ~ "Developing"
   ))
 
 
@@ -84,6 +69,11 @@ selected_continents <- c(
 merged_df_2 <- merged_df_2 %>%
   filter(!(Country %in% selected_continents))
 
+merged_df_2 <- merged_df_2 %>%
+  mutate(World_Status = case_when(
+    Country %in% developing_countries ~ "Developing",
+    TRUE ~ "Developed"
+  ))
 
 # Merge population
 merged_df_2 <- merge(merged_df_2, population_relevant, by = c("Country", "Year"), all.x = TRUE)
@@ -91,29 +81,10 @@ merged_df_2 <- merge(merged_df_2, population_relevant, by = c("Country", "Year")
 merged_df_2 <- merged_df_2[ , !names(merged_df_2) %in% c('With_Education_Share')]
 merged_df_2 <- merged_df_2[ , !names(merged_df_2) %in% c('With_No_Education_Share')]
 
-# Rename columns for clarity
-merged_df_2 <- merged_df_2 %>%
-  rename(
-    Dropped_Out_HS_Female = Dropped_Out_Female,
-    Dropped_Out_HS_Male = Dropped_Out_Male,
-  )
-
-merged_2015 <- merged_2015 %>%
-  rename(
-    Dropped_Out_HS_Female = Dropped_Out_Female,
-    Dropped_Out_HS_Male = Dropped_Out_Male,
-  )
-
 
 # Combine for world data
-world_df <- merge(w_education, w_out_of_school, by = c("Entity", "Year"), all.x = TRUE)
-world_df <- merge(world_df, w_gender_gap, by = c("Entity", "Year"), all.x = TRUE)
-
-world_df <- world_df %>%
-  rename(
-    Country = Entity
-  )
-
+world_df <- merge(w_education, w_out_of_school, by = c("Country", "Year"), all.x = TRUE)
+world_df <- merge(world_df, w_gender_gap, by = c("Country", "Year"), all.x = TRUE)
 
 # Merge population 
 world_df <- merge(world_df, population_relevant, by = c("Country", "Year"), all.x = TRUE)
@@ -130,3 +101,40 @@ world_df <- world_df %>%
 
 world_df <- world_df[ , !names(world_df) %in% c('Country')]
 
+
+# Rename columns for clarity
+merged_df_2 <- merged_df_2 %>%
+  rename(
+    Dropped_Out_HS_Female = Dropped_Out_Female,
+    Dropped_Out_HS_Male = Dropped_Out_Male,
+  )
+
+merged_2015 <- merged_2015 %>%
+  rename(
+    Dropped_Out_HS_Female = Dropped_Out_Female,
+    Dropped_Out_HS_Male = Dropped_Out_Male,
+  )
+
+merged_2020 <- merged_2020 %>%
+  rename(
+    With_Education = With_Education_Share,
+    Without_Education = With_No_Education_Share
+  )
+
+merged_2015 <- merged_2015 %>%
+  rename(
+    With_Education = With_Education_Share,
+    Without_Education = With_No_Education_Share
+  )
+
+world_df <- world_df %>%
+  rename(
+    With_Education = With_Education_Share,
+    Without_Education = With_No_Education_Share
+  )
+
+
+write.csv(merged_2015, file = "C:/COMPSCI_PROJECTS/R/CA/data/dataframes/merged_2015.csv", row.names = FALSE)
+write.csv(merged_2020, file = "C:/COMPSCI_PROJECTS/R/CA/data/dataframes/merged_2020.csv", row.names = FALSE)
+write.csv(merged_df_2, file = "C:/COMPSCI_PROJECTS/R/CA/data/dataframes/merged_df_2.csv", row.names = FALSE)
+write.csv(world_df, file = "C:/COMPSCI_PROJECTS/R/CA/data/dataframes/world_df.csv", row.names = FALSE)

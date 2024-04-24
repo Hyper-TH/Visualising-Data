@@ -99,6 +99,27 @@ out_school <- out_school[out_of_school$Entity %in% common_entities, ]
 gender_gap <- gender_gap[gender_gap_education$Entity %in% common_entities, ]
 
 # Rename columns
+education_ratio <- education_ratio %>%
+  rename(
+    Country = Entity
+  )
+
+learning_years <- learning_years %>%
+  rename(
+    Country = Entity
+  )
+
+
+out_of_school <- out_of_school %>%
+  rename(
+    Country = Entity
+  )
+
+gender_gap_education <- gender_gap_education %>%
+  rename(
+    Country = Entity
+  )
+
 education <- education %>%
   rename(
     Country = Entity
@@ -124,9 +145,9 @@ gender_gap <- gender_gap %>%
 # FOR WORLD DATA
 # OWID_WRL
 # Remove all countries
-w_education <- education_ratio[education_ratio$Entity == "World", ]
-w_gender_gap <- gender_gap_education[gender_gap_education$Entity == "World", ]
-w_out_of_school <- out_of_school[out_of_school$Entity == "World", ]
+w_education <- education_ratio[education_ratio$Country == "World", ]
+w_gender_gap <- gender_gap_education[gender_gap_education$Country == "World", ]
+w_out_of_school <- out_of_school[out_of_school$Country == "World", ]
 
 # Drop Code columns
 w_education$Code <- NULL

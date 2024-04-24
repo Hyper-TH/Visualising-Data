@@ -1,42 +1,46 @@
-## TODO: Change source dataset
+# Find the maximum value of Learning_Years
+merged_df_2020 <- merged_df %>%
+  filter(Year %in% c(2020))
 
-df_2020_developed <- merged_df %>%
-  filter(World_Status == "Developed", Year == 2020) %>%
-  # Sum up the Tertiary_Education_Female and Tertiary_Education_Male values for the visualization
-  summarize(Female = sum(Tertiary_Education_Female, na.rm = TRUE),
-            Male = sum(Tertiary_Education_Male, na.rm = TRUE))
+max_learning_years <- max(merged_df_2020$Learning_Years, na.rm = TRUE)
 
-df_2020_developing <- merged_df %>%
-  filter(World_Status == "Developing", Year == 2020) %>%
-  # Sum up the Tertiary_Education_Female and Tertiary_Education_Male values for the visualization
-  summarize(Female = sum(Tertiary_Education_Female, na.rm = TRUE),
-            Male = sum(Tertiary_Education_Male, na.rm = TRUE))
+# Output the maximum learning years to use in the ggplot scale_x_continuous function
+print(max_learning_years)
 
-# Convert this data to a long format for easier plotting with ggplot2
-df_long1 <- tidyr::pivot_longer(df_2020_developed, 
-                               cols = c(Female, Male),
-                               names_to = "Gender",
-                               values_to = "Sum_Education")
+histogram <- ggplot(merged_df_2020, aes(x = Learning_Years, fill = World_Status)) +
+  geom_histogram(binwidth = 1, position = "dodge") +
+  labs(title = "Duration of Learning Years",
+       x = "Learning Years",
+       y = "Count of Countries",
+       fill = "World Status (IMF)") +
+  theme_minimal() +
+  scale_fill_manual(values = c("Developing" = "lightblue", "Developed" = "lightgreen")) +
+  scale_x_continuous(limits = c(0, max_learning_years), breaks = seq(0, max_learning_years, by = 1))  # Set x-axis breaks to go by 1
+
+# Display the histogram
+print(histogram)
 
 
-# Convert this data to a long format for easier plotting with ggplot2
-df_long2 <- tidyr::pivot_longer(df_2020_developing, 
-                               cols = c(Female, Male),
-                               names_to = "Gender",
-                               values_to = "Sum_Education")
+filtered_merged <- merged_df_2 %>%
+  filter(
+    Year %in% c(2000, 2009, 2018)
+)
 
-ggplot(df_long1, aes(x = Gender, y = Sum_Education, fill = Gender)) +
-  geom_bar(stat = "identity") +  # Use geom_bar with identity stat to plot sums
-  labs(title = "Total Tertiary Education by Gender for Developed Countries in 2020",
-       x = "Gender",
-       y = "Total students") +
-  scale_y_continuous(limits = c(0, 4000)) + 
-  theme_minimal()
+# Create side-by-side bar chart
+ggplot(filtered_merged, aes(x = factor(Year), 
+                      y = Dropped_Out_HS_Male + Dropped_Out_HS_Female, 
+                      fill = World_Status, 
+                      group = interaction(World_Status, Year))) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(title = "High School Dropouts by Development Status and Year",
+       x = "Year",
+       y = "Total Number of Dropouts",
+       fill = "Development Status") +
+  scale_y_continuous(
+    name = "Population",
+    breaks = seq(0, max(filtered_merged$Dropped_Out_HS_Male + filtered_merged$Dropped_Out_HS_Female, na.rm = TRUE), by = 1000000),
+    labels = label_number()  # This will format the numbers in a human-readable way
+  ) +
+  theme_minimal() +
+  scale_fill_manual(values = c("Developed" = "blue", "Developing" = "red"))
 
-ggplot(df_long2, aes(x = Gender, y = Sum_Education, fill = Gender)) +
-  geom_bar(stat = "identity") +  # Use geom_bar with identity stat to plot sums
-  labs(title = "Total Tertiary Education by Gender for Developing Countries in 2020",
-       x = "Gender",
-       y = "Total students") +
-  scale_y_continuous(limits = c(0, 4000)) +  
-  theme_minimal()
