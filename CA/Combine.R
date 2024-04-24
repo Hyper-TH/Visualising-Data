@@ -1,6 +1,6 @@
-rm(merged_df)
-rm(merged_df_2)
-rm(world_df)
+# rm(merged_df)
+# rm(merged_df_2)
+# rm(world_df)
 
 # Left join to include all rows from df1 and so on...
 merged_df <- merge(education, learning, by = c("Country", "Year"), all.x = TRUE)
@@ -42,9 +42,6 @@ merged_2020 <- merged_df[merged_df$Year == 2020, ]
 merged_2015 <- merged_2015[ , !names(merged_2015) %in% c('Learning_Years')]
 merged_2020 <- merged_2020[ , !names(merged_2020) %in% c('Dropped_Out_Male')]
 merged_2020 <- merged_2020[ , !names(merged_2020) %in% c('Dropped_Out_Female')]
-
-
-## Combine out_of_school and gender_gap_filtered and education_ratio
 education_ratio$Code <- NULL
 out_of_school$Code <- NULL
 

@@ -25,6 +25,10 @@ ggplot(filtered_df_2, aes(x = Dropped_Out_HS_Male + Dropped_Out_HS_Female,
     name = "Population",
     label = label_number()
   ) +
+  scale_x_continuous(
+    name = "Total Number Of Dropouts",
+    label = label_number()
+  ) +
   theme_minimal()
 
 summary(merged_df_2)

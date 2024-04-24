@@ -25,7 +25,7 @@ global_access_education <- global_access_education + geom_line(aes(y = Children_
 # Customize the plot
 global_access_education <- global_access_education + theme_minimal() +
   scale_colour_manual(values = c("Children Getting Education" = "blue", "Children Not Getting Education" = "red", "Total Children Population (5-19)" = "black")) +
-  ggtitle("Educational Access vs Total Population (Ages 5-19)")
+  ggtitle("Basic Educational Access vs Total Population (Ages 5-19)")
 
 global_access_education
 
@@ -53,10 +53,10 @@ education_ratio$Year <- as.numeric(as.character(education_ratio$Year))
 education_ratio$With_Education_Share <- as.numeric(education_ratio$With_Education_Share)
 
 # Filter for rows where the Entity is 'OECD'
-df_OECD <- education_ratio[grepl("OECD", education_ratio$Entity), ]
+df_OECD <- education_ratio[grepl("OECD", education_ratio$Country), ]
 
 # Create the line plot
-ggplot(df_OECD, aes(x = Year, y = With_Education_Share, group = Entity, color = Entity)) +
+ggplot(df_OECD, aes(x = Year, y = With_Education_Share, group = Country, color = Country)) +
   geom_line() +
   geom_point() +
   scale_color_manual(values = c("red", "blue", "green", "orange", "brown", "magenta", "cyan", "yellow")) +
@@ -67,7 +67,7 @@ ggplot(df_OECD, aes(x = Year, y = With_Education_Share, group = Entity, color = 
        y = "Ratio in %",
        color = "Country") +
   theme(legend.position = "right") +
- scale_x_continuous(breaks = seq(min(df_OECD$Year), max(df_OECD$Year), by = 10))
+ scale_x_continuous(breaks = seq(min(df_OECD$Year), max(df_OECD$Year), by = 20))
 
 
 # Line graph
@@ -75,9 +75,9 @@ ggplot(df_OECD, aes(x = Year, y = With_Education_Share, group = Entity, color = 
 gender_gap_education$Tertiary_Education_Female <- as.numeric(gender_gap_education$Tertiary_Education_Female)
 gender_gap_education$Tertiary_Education_Male <- as.numeric(gender_gap_education$Tertiary_Education_Male)
 
-selected_entities <- c("United States", "Brazil", "Ireland", "Afghanistan", "Philippines", "Nigeria", "India")
+selected_entities <- c("United States", "Brazil", "Ireland", "Afghanistan", "Philippines", "India")
 gender_gap_filtered <- gender_gap_education %>% 
-  filter(Entity %in% selected_entities) %>%
+  filter(Country %in% selected_entities) %>%
   filter(!is.na(Tertiary_Education_Female) & !is.na(Tertiary_Education_Male) & !is.na(Year))
 
 # Find max value to set the limit
@@ -88,9 +88,9 @@ print(max_value_female)
 print(max_value_male)
 
 # Create the line plot
-ggplot(gender_gap_filtered, aes(x = Year, y = Tertiary_Education_Female, color = Entity)) +
+college_female <- ggplot(gender_gap_filtered, aes(x = Year, y = Tertiary_Education_Female, color = Country)) +
   geom_line() +
-  labs(title = "Tertiary Education Female by Country Over Years",
+  labs(title = "Percentage of Females With College Education",
        x = "Year",
        y = "Tertiary Education Female (%)",
        color = "Entity") +
@@ -99,14 +99,15 @@ ggplot(gender_gap_filtered, aes(x = Year, y = Tertiary_Education_Female, color =
   scale_y_continuous(limits = c(0, max_value_female), breaks = seq(0, 125, by = 25))
 
 # Create the line plot
-ggplot(gender_gap_filtered, aes(x = Year, y = Tertiary_Education_Male, color = Entity)) +
+college_male <- ggplot(gender_gap_filtered, aes(x = Year, y = Tertiary_Education_Male, color = Country)) +
   geom_line() +
-  labs(title = "Tertiary Education Male by Country Over Years",
+  labs(title = "Percentage of Males With College Education",
        x = "Year",
-       y = "Tertiary Education Female (%)",
+       y = "Tertiary Education Male (%)",
        color = "Entity") +
   theme_minimal() +
   scale_x_continuous(breaks = seq(min(gender_gap_filtered$Year), max(gender_gap_filtered$Year), by = 20)) +
   scale_y_continuous(limits = c(0, max_value_female), breaks = seq(0, 100, by = 25))
 
-
+college_female
+college_male
